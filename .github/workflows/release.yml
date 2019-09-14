@@ -2,6 +2,8 @@ name: Release
 
 on:
   push:
+    # branches:
+    #   - master
     tags:
       - "*"
 
@@ -19,6 +21,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
+      - name: get
+        run: |
+          export GOBIN=$GOROOT/bin
+          go get github.com/freecracy/help
+          echo $GOBIN
+          mv $GOBIN/help .
       # - name: Get dependencies
       #   run: |
       #     export GO111MODULE=on
@@ -44,6 +52,7 @@ jobs:
             tar -cvzf help.linux.tar.gz help-${GITHUB_REF:10}
 
       - name: publish
+        #if: contains(github.ref, 'refs/tags')
         uses: ./.github/actions/release
         env:
           GITHUB_TOKEN: ${{ secrets.HUB_TOKEN }}
