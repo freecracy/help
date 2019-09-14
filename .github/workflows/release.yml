@@ -1,38 +1,53 @@
 name: Release
 
-on: push
+on:
+  push:
+    tags:
+      - "*"
 
 jobs:
 
   publish:
     runs-on: ubuntu-latest
     steps:
-    
+
       - name: Set up Go 1.12
         uses: actions/setup-go@v1
         with:
           go-version: 1.12
-          
+
       - name: Checkout
         uses: actions/checkout@master
-        
-      - name: Get dependencies
+
+      # - name: Get dependencies
+      #   run: |
+      #     export GO111MODULE=on
+          #export GOBIN=$(go env GOPATH)/bin
+          #export PATH=$PATH:$(go env GOPATH)/bin
+          #go get -v -t -d ./...
+          # if [ -f Gopkg.toml ]; then
+          #   curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+          #   dep ensure
+          # fi
+
+      # - name: Build
+      #   run: |
+      #     export GO111MODULE=on
+      #     go mod init
+      #     go mod tidy
+      #     go build -v .
+
+      - name: tar
         run: |
-          go get -v -t -d ./...
-          if [ -f Gopkg.toml ]; then
-            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-            dep ensure
-          fi
-          
-      - name: Build
-        run: |
-          go build -v .
-          tar -cvzf help.linux.tar.gz help
-        
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        #if: startsWith(github.ref, 'refs/tags/')
-        with:
-          file: help.linux.tar.gz
+            mkdir help-${GITHUB_REF:10}
+            mv help help-${GITHUB_REF:10}
+            tar -cvzf help.linux.tar.gz help-${GITHUB_REF:10}
+
+      - name: publish
+        uses: ./.github/actions/release
         env:
           GITHUB_TOKEN: ${{ secrets.HUB_TOKEN }}
+        with:
+          args: help.linux.tar.gz
+
+

@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+# curl https://raw.githubusercontent.com/freecracy/help/master/scripts/install | bash
+
+email=freecracy1024@gmail.com
+user=freecracy
+app=help
+
+function githubLatestTag {
+    finalUrl=$(curl "https://github.com/$1/releases/latest" -s -L -I -o /dev/null -w '%{url_effective}')
+    echo "${finalUrl##*v}"
+}
+
+TAG=$(githubLatestTag "$user/$app")
+
+file="https://github.com/$user/$app/releases/download/v$TAG/$app.linux.tar.gz"
+
+echo "Downloading $file"
+
+curl -L $file > $app.tar.gz
+tar -xvzf $app.tar.gz "$app-v$TAG/$app"
+mv "$app-v$TAG/$app" ./$app
+rm $app.tar.gz
+rm -rf "$app-v$TAG"
+
+cat <<-'EOM'
+
+./help
+
+EOM
+
+

@@ -1,0 +1,8 @@
+name: freecracy
+author: freecracy1024@gmail.com
+description: publish
+
+runs:
+  using: docker
+  image: Dockerfile
+
