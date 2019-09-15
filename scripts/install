@@ -25,6 +25,11 @@ rm -rf "$app-v$TAG"
 
 cat <<-'EOM'
 
+  _   _   _   _
+ / \ / \ / \ / \
+( h | e | l | p )
+ \_/ \_/ \_/ \_/
+
 ./help
 
 EOM
